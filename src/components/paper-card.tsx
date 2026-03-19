@@ -4,7 +4,7 @@ import { StatusBadge } from "@/components/status-badge";
 
 export function PaperCard({ paper, compact = false }: { paper: Paper; compact?: boolean }) {
   return (
-    <article className="rounded-[2rem] border border-[var(--line)] bg-white p-6 shadow-[0_20px_60px_rgba(35,31,26,0.08)]">
+    <article className="rounded-[2rem] border border-[#d9cbb2] bg-white/90 p-6 shadow-[0_20px_60px_rgba(100,61,33,0.08)]">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">
