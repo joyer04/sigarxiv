@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 String       @id @default(cuid())
+  email              String       @unique
+  displayName        String
+  teamId             String?
+  team               Team?        @relation(fields: [teamId], references: [id])
+  walletAddress      String?      @unique
+  role               UserRole     @default(AUTHOR)
+  sigCreditBalance   Int          @default(100)
+  penalties          Int          @default(0)
+  createdAt          DateTime     @default(now())
+  submittedPapers    Paper[]      @relation("PaperSubmitter")
+  authoredPapers     PaperAuthor[]
+  ownedAgents        Agent[]      @relation("AgentOwner")
+  ownedReviews       Review[]     @relation("ReviewOwner")
+  votes              ReviewVote[]
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  users     User[]
+  agents    Agent[]
+  reviews   Review[] @relation("ReviewTeam")
+}
+
+model Agent {
+  id            String      @id @default(cuid())
+  slug          String      @unique
+  name          String
+  modelName     String
+  specialty     String
+  status        AgentStatus @default(ACTIVE)
+  ownerId       String
+  owner         User        @relation("AgentOwner", fields: [ownerId], references: [id])
+  teamId        String?
+  team          Team?       @relation(fields: [teamId], references: [id])
+  reviews       Review[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([ownerId, name])
+}
+
+model Paper {
+  id                String          @id @default(cuid())
+  slug              String          @unique
+  title             String
+  category          String
+  abstract          String
+  contentMarkdown   String
+  status            PaperStatus     @default(DRAFT)
+  creditsLocked     Int             @default(0)
+  roundsRequired    Int             @default(2)
+  submittedById     String
+  submittedBy       User            @relation("PaperSubmitter", fields: [submittedById], references: [id])
+  authors           PaperAuthor[]
+  revisions         RevisionRound[]
+  reviews           Review[]
+  publishedAt       DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model PaperAuthor {
+  id        String   @id @default(cuid())
+  paperId   String
+  userId    String
+  sortOrder Int
+  paper     Paper    @relation(fields: [paperId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([paperId, userId])
+  @@unique([paperId, sortOrder])
+}
+
+model Review {
+  id                    String               @id @default(cuid())
+  paperId               String
+  reviewerAgentId       String
+  reviewerOwnerId       String
+  reviewerTeamId        String?
+  reviewerAgent         Agent                @relation(fields: [reviewerAgentId], references: [id])
+  reviewerOwner         User                 @relation("ReviewOwner", fields: [reviewerOwnerId], references: [id])
+  reviewerTeam          Team?                @relation("ReviewTeam", fields: [reviewerTeamId], references: [id])
+  paper                 Paper                @relation(fields: [paperId], references: [id])
+  coreClaim             String
+  assumptions           String
+  failureMode           String
+  alternativeHypothesis String
+  verificationProposal  String
+  logicalWeakness       String
+  impactScore           Int
+  recommendation        Recommendation
+  qualityScore          Float?
+  diversityScore        Float?
+  upvoteCount           Int                  @default(0)
+  similarityScore       Float?
+  disqualified          Boolean              @default(false)
+  disqualificationReason String?
+  selectedTop3          Boolean              @default(false)
+  votes                 ReviewVote[]
+  createdAt             DateTime             @default(now())
+
+  @@unique([paperId, reviewerAgentId])
+}
+
+model RevisionRound {
+  id              String         @id @default(cuid())
+  paperId         String
+  paper           Paper          @relation(fields: [paperId], references: [id])
+  roundNumber     Int
+  status          RevisionStatus @default(REQUIRED)
+  reviewerSummary String
+  authorResponse  String?
+  reviewerDecision String?
+  createdAt       DateTime       @default(now())
+
+  @@unique([paperId, roundNumber])
+}
+
+model ReviewVote {
+  id         String   @id @default(cuid())
+  reviewId   String
+  voterId    String
+  review     Review   @relation(fields: [reviewId], references: [id])
+  voter      User     @relation(fields: [voterId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([reviewId, voterId])
+}
+
+enum UserRole {
+  AUTHOR
+  REVIEWER
+  MODERATOR
+  EDITOR
+}
+
+enum PaperStatus {
+  DRAFT
+  UNDER_REVIEW
+  IN_REVISION
+  PUBLISHED
+}
+
+enum Recommendation {
+  ACCEPT
+  MINOR
+  MAJOR
+  REJECT
+}
+
+enum RevisionStatus {
+  REQUIRED
+  ADDRESSED
+  APPROVED
+  ESCALATED
+}
+
+enum AgentStatus {
+  ACTIVE
+  SUSPENDED
+}

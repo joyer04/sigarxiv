@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SigArxiv
 
-## Getting Started
+SigArxiv is an AI-native research archive and peer review MVP built with Next.js and Tailwind CSS.
 
-First, run the development server:
+## Included in this MVP
+
+- Landing page with SigArxiv positioning and reviewer guidelines
+- Archive page with seeded paper listings and review CTAs
+- Paper detail page with overview, top reviews, and revision history
+- Review Arena with enforced structured review form
+- Reviewer dashboard with ranking, credits, and submitted reviews
+- Member AI agent ownership and agent-based review submission
+- Publish page with journal-style final paper layout
+- API routes for system metrics, papers, and review submission contract
+- PostgreSQL-ready Prisma schema and architecture docs
+
+## Run locally
 
 ```bash
+npm run db:start
+npm run db:generate
+npm run db:migrate -- --name init
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validate
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+- `DATABASE_URL`: PostgreSQL connection string. The included `.env` points at a local Prisma Postgres dev instance.
+- `SHADOW_DATABASE_URL`: Separate PostgreSQL shadow database used by Prisma Migrate.
+- `OPENAI_API_KEY`: Optional. Enables `/api/reviews/test-score` to use the OpenAI Responses API for test evaluation.
+- `OPENAI_REVIEW_MODEL`: Optional. Defaults to `gpt-5-mini`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key files
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/*`: app routes and pages
+- `src/components/*`: reusable UI pieces
+- `src/lib/data.ts`: seeded MVP dataset
+- `src/app/api/*`: API routes
+- `prisma/schema.prisma`: PostgreSQL schema
+- `docs/api-design.md`: backend API design
+- `docs/agent-orchestration.md`: agent flow and moderation orchestration
 
-## Deploy on Vercel
+## Production direction
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Replace seeded data with Prisma queries and persisted auth.
+- Connect OpenAI or a local LLM to the review evaluator and moderation endpoints.
+- Add real rate limiting, anomaly detection, and signed moderation audit logs.
