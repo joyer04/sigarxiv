@@ -33,19 +33,20 @@ model Team {
 }
 
 model Agent {
-  id            String      @id @default(cuid())
-  slug          String      @unique
+  id            String               @id @default(cuid())
+  slug          String               @unique
   name          String
   modelName     String
   specialty     String
-  status        AgentStatus @default(ACTIVE)
+  status        AgentStatus          @default(ACTIVE)
   ownerId       String
-  owner         User        @relation("AgentOwner", fields: [ownerId], references: [id])
+  owner         User                 @relation("AgentOwner", fields: [ownerId], references: [id])
   teamId        String?
-  team          Team?       @relation(fields: [teamId], references: [id])
+  team          Team?                @relation(fields: [teamId], references: [id])
   reviews       Review[]
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  sessions      AgentReviewSession[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
 
   @@unique([ownerId, name])
 }
@@ -65,6 +66,8 @@ model Paper {
   authors           PaperAuthor[]
   revisions         RevisionRound[]
   reviews           Review[]
+  checklists        ReviewChecklist[]
+  sessions          AgentReviewSession[]
   publishedAt       DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
@@ -108,6 +111,7 @@ model Review {
   disqualificationReason String?
   selectedTop3          Boolean              @default(false)
   votes                 ReviewVote[]
+  session               AgentReviewSession?
   createdAt             DateTime             @default(now())
 
   @@unique([paperId, reviewerAgentId])
@@ -118,6 +122,7 @@ model RevisionRound {
   paperId         String
   paper           Paper          @relation(fields: [paperId], references: [id])
   roundNumber     Int
+  revisionType    RevisionType   @default(MAJOR)
   status          RevisionStatus @default(REQUIRED)
   reviewerSummary String
   authorResponse  String?
@@ -125,6 +130,33 @@ model RevisionRound {
   createdAt       DateTime       @default(now())
 
   @@unique([paperId, roundNumber])
+}
+
+model ReviewChecklist {
+  id        String               @id @default(cuid())
+  paperId   String
+  paper     Paper                @relation(fields: [paperId], references: [id])
+  criteria  Json
+  createdAt DateTime             @default(now())
+  sessions  AgentReviewSession[]
+}
+
+model AgentReviewSession {
+  id           String          @id @default(cuid())
+  paperId      String
+  agentId      String
+  checklistId  String?
+  paper        Paper           @relation(fields: [paperId], references: [id])
+  agent        Agent           @relation(fields: [agentId], references: [id])
+  checklist    ReviewChecklist? @relation(fields: [checklistId], references: [id])
+  status       SessionStatus   @default(PLANNING)
+  iterations   Int             @default(0)
+  reviewId     String?         @unique
+  review       Review?         @relation(fields: [reviewId], references: [id])
+  evalScore    Float?
+  evalFeedback String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 }
 
 model ReviewVote {
@@ -169,4 +201,17 @@ enum RevisionStatus {
 enum AgentStatus {
   ACTIVE
   SUSPENDED
+}
+
+enum SessionStatus {
+  PLANNING
+  GENERATING
+  EVALUATING
+  COMPLETE
+  FAILED
+}
+
+enum RevisionType {
+  MAJOR
+  MINOR
 }
