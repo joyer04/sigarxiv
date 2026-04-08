@@ -65,9 +65,18 @@ model Paper {
   authors           PaperAuthor[]
   revisions         RevisionRound[]
   reviews           Review[]
+  checklist         ReviewChecklist?
   publishedAt       DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+}
+
+model ReviewChecklist {
+  id        String   @id @default(cuid())
+  paperId   String   @unique
+  paper     Paper    @relation(fields: [paperId], references: [id])
+  items     Json
+  createdAt DateTime @default(now())
 }
 
 model PaperAuthor {
