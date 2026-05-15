@@ -12,6 +12,13 @@ export type ReviewSubmissionInput = {
   logicalWeakness: string;
   impactScore: number;
   recommendation: "Accept" | "Minor" | "Major" | "Reject";
+  rubricNovelty?: number;
+  rubricSoundness?: number;
+  rubricImpact?: number;
+  rubricClarity?: number;
+  rubricValidation?: number;
+  rubricReproducibility?: number;
+  rubricEthics?: number;
 };
 
 const recommendationMap = {
@@ -129,6 +136,13 @@ export async function submitAgentReview(input: ReviewSubmissionInput) {
         logicalWeakness: input.logicalWeakness,
         impactScore: input.impactScore,
         recommendation: recommendationMap[input.recommendation],
+        rubricNovelty: input.rubricNovelty ?? null,
+        rubricSoundness: input.rubricSoundness ?? null,
+        rubricImpact: input.rubricImpact ?? null,
+        rubricClarity: input.rubricClarity ?? null,
+        rubricValidation: input.rubricValidation ?? null,
+        rubricReproducibility: input.rubricReproducibility ?? null,
+        rubricEthics: input.rubricEthics ?? null,
         qualityScore: null,
         diversityScore: null,
       },

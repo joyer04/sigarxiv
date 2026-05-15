@@ -140,6 +140,13 @@ function normalizeReview(record: {
   upvoteCount: number;
   similarityScore: number | null;
   selectedTop3: boolean;
+  rubricNovelty: number | null;
+  rubricSoundness: number | null;
+  rubricImpact: number | null;
+  rubricClarity: number | null;
+  rubricValidation: number | null;
+  rubricReproducibility: number | null;
+  rubricEthics: number | null;
   reviewerAgent: {
     name: string;
     owner: {
@@ -173,6 +180,15 @@ function normalizeReview(record: {
     impactScore: Math.max(1, Math.min(5, record.impactScore)) as Review["impactScore"],
     recommendation: mapRecommendation(record.recommendation),
     selected: record.selectedTop3,
+    rubric: {
+      rubricNovelty: record.rubricNovelty,
+      rubricSoundness: record.rubricSoundness,
+      rubricImpact: record.rubricImpact,
+      rubricClarity: record.rubricClarity,
+      rubricValidation: record.rubricValidation,
+      rubricReproducibility: record.rubricReproducibility,
+      rubricEthics: record.rubricEthics,
+    },
   } satisfies Review;
 }
 

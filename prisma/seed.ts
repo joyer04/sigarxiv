@@ -1,5 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { PaperStatus, PrismaClient, Recommendation, RevisionStatus, UserRole } from "@prisma/client";
 import { papers, reviewAgents, reviews } from "../src/lib/data";
 
@@ -17,6 +19,7 @@ const userRegistry = new Map<
     email: string;
     displayName: string;
     role: UserRole;
+    password: string;
     teamName?: string;
     sigCreditBalance: number;
     penalties: number;
@@ -37,7 +40,7 @@ function slugifyName(name: string) {
 function ensureUser(
   displayName: string,
   role: UserRole,
-  options: { teamName?: string; sigCreditBalance?: number; penalties?: number } = {},
+  options: { teamName?: string; sigCreditBalance?: number; penalties?: number; password?: string } = {},
 ) {
   const existing = userRegistry.get(displayName);
 
@@ -48,6 +51,9 @@ function ensureUser(
     if (!existing.teamName && options.teamName) {
       existing.teamName = options.teamName;
     }
+    if (options.password) {
+      existing.password = options.password;
+    }
     return;
   }
 
@@ -57,6 +63,7 @@ function ensureUser(
     email: `${slugifyName(displayName)}@sigarxiv.local`,
     displayName,
     role,
+    password: options.password ?? "author-demo",
     teamName: options.teamName ?? override?.teamName,
     sigCreditBalance: options.sigCreditBalance ?? 100,
     penalties: options.penalties ?? 0,
@@ -74,10 +81,15 @@ for (const agent of reviewAgents) {
     teamName: agent.teamName,
     sigCreditBalance: agent.credits,
     penalties: agent.flags,
+    password: agent.ownerRole === "AUTHOR" ? "author-demo" : "reviewer-owner-demo",
   });
 }
 
 async function main() {
+  const generatedAgentSecrets: Array<{ loginIdentifier: string; secret: string }> = [];
+
+  await prisma.authSession.deleteMany();
+  await prisma.authThrottle.deleteMany();
   await prisma.reviewVote.deleteMany();
   await prisma.review.deleteMany();
   await prisma.agent.deleteMany();
@@ -107,10 +119,12 @@ async function main() {
   const users = new Map<string, string>();
 
   for (const user of userRegistry.values()) {
+    const passwordHash = await bcrypt.hash(user.password, 10);
     const created = await prisma.user.create({
       data: {
         email: user.email,
         displayName: user.displayName,
+        passwordHash,
         role: user.role,
         sigCreditBalance: user.sigCreditBalance,
         penalties: user.penalties,
@@ -123,10 +137,14 @@ async function main() {
   const agents = new Map<string, string>();
 
   for (const agent of reviewAgents) {
+    const plainSecret = randomBytes(18).toString("base64url");
+    const secretHash = await bcrypt.hash(plainSecret, 10);
     const created = await prisma.agent.create({
       data: {
         slug: agent.slug,
         name: agent.name,
+        loginIdentifier: agent.slug,
+        secretHash,
         modelName: agent.modelName,
         specialty: agent.specialty,
         ownerId: users.get(agent.owner)!,
@@ -134,6 +152,10 @@ async function main() {
       },
     });
     agents.set(agent.name, created.id);
+    generatedAgentSecrets.push({
+      loginIdentifier: agent.slug,
+      secret: plainSecret,
+    });
   }
 
   const paperIds = new Map<string, string>();
@@ -231,6 +253,11 @@ async function main() {
         selectedTop3: review.selected,
       },
     });
+  }
+
+  console.log("Generated local reviewer agent secrets:");
+  for (const entry of generatedAgentSecrets) {
+    console.log(`${entry.loginIdentifier}: ${entry.secret}`);
   }
 }
 

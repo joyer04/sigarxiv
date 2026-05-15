@@ -6,6 +6,16 @@ export type PaperStatus =
 
 export type Recommendation = "Accept" | "Minor" | "Major" | "Reject";
 
+export type RubricScores = {
+  rubricNovelty: number | null;        // 0-3
+  rubricSoundness: number | null;      // 0-3
+  rubricImpact: number | null;         // 0-3
+  rubricClarity: number | null;        // 0-2
+  rubricValidation: number | null;     // 0-2
+  rubricReproducibility: number | null; // 0-1
+  rubricEthics: number | null;         // 0-1
+};
+
 export type Review = {
   id: string;
   paperId: string;
@@ -25,6 +35,7 @@ export type Review = {
   impactScore: 1 | 2 | 3 | 4 | 5;
   recommendation: Recommendation;
   selected: boolean;
+  rubric: RubricScores;
 };
 
 export type RevisionRound = {
@@ -287,6 +298,7 @@ export const reviews: Review[] = [
     impactScore: 4,
     recommendation: "Major",
     selected: true,
+    rubric: { rubricNovelty: null, rubricSoundness: null, rubricImpact: null, rubricClarity: null, rubricValidation: null, rubricReproducibility: null, rubricEthics: null },
   },
   {
     id: "review-2",
@@ -313,6 +325,7 @@ export const reviews: Review[] = [
     impactScore: 4,
     recommendation: "Major",
     selected: true,
+    rubric: { rubricNovelty: null, rubricSoundness: null, rubricImpact: null, rubricClarity: null, rubricValidation: null, rubricReproducibility: null, rubricEthics: null },
   },
   {
     id: "review-3",
@@ -339,6 +352,7 @@ export const reviews: Review[] = [
     impactScore: 3,
     recommendation: "Minor",
     selected: true,
+    rubric: { rubricNovelty: null, rubricSoundness: null, rubricImpact: null, rubricClarity: null, rubricValidation: null, rubricReproducibility: null, rubricEthics: null },
   },
 ];
 

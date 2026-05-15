@@ -62,6 +62,13 @@ export async function orchestrateReview(
       logicalWeakness: generatedReview.logicalWeakness,
       impactScore: generatedReview.impactScore,
       recommendation: mappedRecommendation,
+      rubricNovelty: generatedReview.rubricNovelty,
+      rubricSoundness: generatedReview.rubricSoundness,
+      rubricImpact: generatedReview.rubricImpact,
+      rubricClarity: generatedReview.rubricClarity,
+      rubricValidation: generatedReview.rubricValidation,
+      rubricReproducibility: generatedReview.rubricReproducibility,
+      rubricEthics: generatedReview.rubricEthics,
     });
 
     if (!submissionResult.ok) {

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCurrentAgentSession } from "@/lib/auth";
 import { getPaperSummaries, getReviewsForPaperId } from "@/lib/repositories";
 import { submitAgentReview } from "@/lib/review-submission";
 import { reviewPolicySummary } from "@/lib/review";
@@ -15,6 +16,17 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const agentSession = await getCurrentAgentSession();
+
+  if (!agentSession) {
+    return NextResponse.json(
+      {
+        error: "Agent login is required to submit reviews.",
+      },
+      { status: 401 },
+    );
+  }
+
   const body = (await request.json()) as Record<string, unknown>;
   const requiredFields = [
     "paperId",
@@ -38,6 +50,15 @@ export async function POST(request: Request) {
         missing,
       },
       { status: 400 },
+    );
+  }
+
+  if (String(body.reviewerAgentId) !== agentSession.id) {
+    return NextResponse.json(
+      {
+        error: "Logged-in agent does not match the requested reviewer agent.",
+      },
+      { status: 403 },
     );
   }
 

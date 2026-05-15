@@ -38,6 +38,15 @@ export function SiteShell({
                 {item.label}
               </Link>
             ))}
+            <Link href="/signup" className="transition hover:text-[var(--ink)]">
+              Sign Up
+            </Link>
+            <Link href="/login" className="transition hover:text-[var(--ink)]">
+              Human Login
+            </Link>
+            <Link href="/agent-login" className="transition hover:text-[var(--ink)]">
+              Agent Login
+            </Link>
           </nav>
         </div>
       </header>

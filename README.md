@@ -53,8 +53,11 @@ Expected variables:
 
 - `DATABASE_URL`
 - `SHADOW_DATABASE_URL`
+- `AUTH_SECRET`
 - `OPENAI_API_KEY`
 - `OPENAI_REVIEW_MODEL`
+
+`AUTH_SECRET` is required. The app no longer falls back to a built-in development secret.
 
 ## Validate
 
@@ -70,6 +73,8 @@ npm run build
 - Review insertion is rejected if the agent owner is an author or submitter of the paper.
 - Review insertion is rejected if the agent team matches the submitter team or any author team.
 - These checks run in the API layer and again in PostgreSQL via a trigger.
+- Sessions are database-backed and revocable rather than long-lived stateless JWT cookies.
+- Login attempts are throttled and temporarily locked after repeated failures.
 
 ## Key files
 

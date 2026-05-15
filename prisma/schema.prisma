@@ -10,6 +10,7 @@ model User {
   id                 String       @id @default(cuid())
   email              String       @unique
   displayName        String
+  passwordHash       String?
   teamId             String?
   team               Team?        @relation(fields: [teamId], references: [id])
   walletAddress      String?      @unique
@@ -22,6 +23,7 @@ model User {
   ownedAgents        Agent[]      @relation("AgentOwner")
   ownedReviews       Review[]     @relation("ReviewOwner")
   votes              ReviewVote[]
+  sessions           AuthSession[]
 }
 
 model Team {
@@ -33,21 +35,55 @@ model Team {
 }
 
 model Agent {
-  id            String      @id @default(cuid())
-  slug          String      @unique
-  name          String
-  modelName     String
-  specialty     String
-  status        AgentStatus @default(ACTIVE)
-  ownerId       String
-  owner         User        @relation("AgentOwner", fields: [ownerId], references: [id])
-  teamId        String?
-  team          Team?       @relation(fields: [teamId], references: [id])
-  reviews       Review[]
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id              String            @id @default(cuid())
+  slug            String            @unique
+  name            String
+  loginIdentifier String            @unique
+  secretHash      String
+  modelName       String
+  specialty       String
+  status          AgentStatus       @default(ACTIVE)
+  ownerId         String
+  owner           User              @relation("AgentOwner", fields: [ownerId], references: [id])
+  teamId          String?
+  team            Team?             @relation(fields: [teamId], references: [id])
+  reviews         Review[]
+  sessions        AuthSession[]
+  recruitments    Recruitment[]
+  agentVotesCast  AgentReviewVote[] @relation("VoterAgent")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   @@unique([ownerId, name])
+}
+
+model AuthSession {
+  id          String      @id @default(cuid())
+  tokenHash   String      @unique
+  kind        SessionKind
+  userId      String?
+  agentId     String?
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  user        User?       @relation(fields: [userId], references: [id])
+  agent       Agent?      @relation(fields: [agentId], references: [id])
+
+  @@index([kind, userId])
+  @@index([kind, agentId])
+}
+
+model AuthThrottle {
+  id             String       @id @default(cuid())
+  scope          AuthScope
+  identifier     String
+  failedCount    Int          @default(0)
+  lockedUntil    DateTime?
+  lastAttemptAt  DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([scope, identifier])
 }
 
 model Paper {
@@ -66,6 +102,7 @@ model Paper {
   revisions         RevisionRound[]
   reviews           Review[]
   checklist         ReviewChecklist?
+  recruitments      Recruitment[]
   publishedAt       DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
@@ -109,6 +146,13 @@ model Review {
   logicalWeakness       String
   impactScore           Int
   recommendation        Recommendation
+  rubricNovelty         Int?
+  rubricSoundness       Int?
+  rubricImpact          Int?
+  rubricClarity         Int?
+  rubricValidation      Int?
+  rubricReproducibility Int?
+  rubricEthics          Int?
   qualityScore          Float?
   diversityScore        Float?
   upvoteCount           Int                  @default(0)
@@ -117,6 +161,7 @@ model Review {
   disqualificationReason String?
   selectedTop3          Boolean              @default(false)
   votes                 ReviewVote[]
+  agentVotes            AgentReviewVote[]
   createdAt             DateTime             @default(now())
 
   @@unique([paperId, reviewerAgentId])
@@ -178,4 +223,49 @@ enum RevisionStatus {
 enum AgentStatus {
   ACTIVE
   SUSPENDED
+}
+
+enum SessionKind {
+  USER
+  AGENT
+}
+
+enum AuthScope {
+  USER_EMAIL
+  AGENT_LOGIN
+}
+
+model Recruitment {
+  id          String            @id @default(cuid())
+  paperId     String
+  agentId     String
+  paper       Paper             @relation(fields: [paperId], references: [id])
+  agent       Agent             @relation(fields: [agentId], references: [id])
+  status      RecruitmentStatus @default(PENDING)
+  reviewId    String?
+  error       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([paperId, agentId])
+}
+
+model AgentReviewVote {
+  id        String   @id @default(cuid())
+  reviewId  String
+  voterId   String
+  score     Int
+  rationale String
+  review    Review   @relation(fields: [reviewId], references: [id])
+  voter     Agent    @relation("VoterAgent", fields: [voterId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([reviewId, voterId])
+}
+
+enum RecruitmentStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+  FAILED
 }
