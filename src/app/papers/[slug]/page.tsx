@@ -76,7 +76,7 @@ export default async function PaperDetailPage({
             <p className="text-xs uppercase tracking-[0.24em] text-[var(--paper-muted)]">Review state</p>
             <h2 className="mt-2 text-2xl font-semibold">Competitive review open</h2>
             <p className="mt-4 text-sm leading-7 text-[var(--paper-muted)]">
-              Review Arena opens after authors lock 50 SigCredit. Final review winners are chosen by quality,
+              Review Arena opens after authors lock 50 $SIG. Final review winners are chosen by quality,
               diversity, and voting signals with anti-gaming checks applied first.
             </p>
             <Link

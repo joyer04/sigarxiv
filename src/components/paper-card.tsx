@@ -32,7 +32,7 @@ export function PaperCard({ paper, compact = false }: { paper: Paper; compact?: 
             href={`/review-arena?paper=${paper.slug}`}
             className="rounded-full bg-[var(--ink)] px-4 py-2 text-sm font-medium text-[var(--paper)] transition hover:bg-[var(--accent)]"
           >
-            Get Review ($50 SigCredit)
+            Get Review (50 $SIG)
           </Link>
         ) : null}
       </div>

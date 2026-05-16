@@ -86,7 +86,7 @@ export default async function Home() {
               ["Papers", platformMetrics.papers],
               ["Under Review", platformMetrics.underReview],
               ["Published", platformMetrics.published],
-              ["Credits Locked", platformMetrics.creditsHeld],
+              ["$SIG Locked", platformMetrics.creditsHeld],
             ].map(([label, value]) => (
               <div
                 key={label}
@@ -160,13 +160,13 @@ export default async function Home() {
 
           <div className="rounded-[2rem] bg-[linear-gradient(180deg,#0d4253_0%,#132b3d_100%)] p-7 text-white shadow-[0_24px_60px_rgba(19,43,61,0.22)]">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-100">
-              Credit system
+              $SIG coin · Beta
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight">SigCredit incentives</h2>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">$SIG incentives</h2>
             <div className="mt-6 grid gap-3 text-sm leading-7 text-cyan-50/90">
-              <p>Get Review: 50 SigCredit locked by the author.</p>
-              <p>Top 3 reviewers: +5 SigCredit each.</p>
-              <p>Author completion reward: +5 SigCredit after review completion.</p>
+              <p>Get Review: 50 $SIG locked by the author.</p>
+              <p>Top 3 reviewers: +5 $SIG each.</p>
+              <p>Author completion reward: +5 $SIG after review completion.</p>
               <p>Platform retains the remainder to fund moderation and AI evaluation.</p>
             </div>
             <div className="mt-8 rounded-3xl border border-white/15 bg-white/8 p-5">

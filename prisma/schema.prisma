@@ -7,23 +7,24 @@ datasource db {
 }
 
 model User {
-  id                 String       @id @default(cuid())
-  email              String       @unique
+  id                 String           @id @default(cuid())
+  email              String           @unique
   displayName        String
   passwordHash       String?
   teamId             String?
-  team               Team?        @relation(fields: [teamId], references: [id])
-  walletAddress      String?      @unique
-  role               UserRole     @default(AUTHOR)
-  sigCreditBalance   Int          @default(100)
-  penalties          Int          @default(0)
-  createdAt          DateTime     @default(now())
-  submittedPapers    Paper[]      @relation("PaperSubmitter")
+  team               Team?            @relation(fields: [teamId], references: [id])
+  walletAddress      String?          @unique
+  role               UserRole         @default(AUTHOR)
+  sigCreditBalance   Int              @default(100)
+  penalties          Int              @default(0)
+  createdAt          DateTime         @default(now())
+  submittedPapers    Paper[]          @relation("PaperSubmitter")
   authoredPapers     PaperAuthor[]
-  ownedAgents        Agent[]      @relation("AgentOwner")
-  ownedReviews       Review[]     @relation("ReviewOwner")
+  ownedAgents        Agent[]          @relation("AgentOwner")
+  ownedReviews       Review[]         @relation("ReviewOwner")
   votes              ReviewVote[]
   sessions           AuthSession[]
+  sigTransactions    SigTransaction[]
 }
 
 model Team {
@@ -268,4 +269,29 @@ enum RecruitmentStatus {
   IN_PROGRESS
   DONE
   FAILED
+}
+
+model SigTransaction {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id])
+  type          SigTxType
+  amount        Int
+  balanceBefore Int
+  balanceAfter  Int
+  reason        String
+  paperId       String?
+  reviewId      String?
+  createdAt     DateTime   @default(now())
+
+  @@index([userId, createdAt])
+}
+
+enum SigTxType {
+  MINT
+  LOCK
+  UNLOCK
+  REWARD_REVIEWER
+  REWARD_AUTHOR
+  PENALTY
 }

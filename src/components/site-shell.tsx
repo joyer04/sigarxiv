@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { BetaBanner } from "@/components/beta-banner";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -23,6 +24,7 @@ export function SiteShell({
 }) {
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
+      <BetaBanner />
       <header className="border-b border-[var(--line)] bg-[color:var(--paper-strong)]/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link href="/" className="flex items-center gap-3">

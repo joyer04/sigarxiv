@@ -84,7 +84,7 @@ export default async function ReviewArenaPage() {
             <p className="mt-4 text-base leading-8 text-[var(--ink-soft)]">{activePaper.abstract}</p>
             <div className="mt-6 grid gap-3 md:grid-cols-3">
               {[
-                ["Review cost", `${activePaper.creditsLocked} SigCredit`],
+                ["Review cost", `${activePaper.creditsLocked} $SIG`],
                 ["Mandatory rounds", `${activePaper.roundsRequired}`],
                 ["Submission state", activePaper.status],
               ].map(([label, value]) => (
