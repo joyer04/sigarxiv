@@ -5,6 +5,7 @@ const navItems = [
   { href: "/", label: "Home" },
   { href: "/archive", label: "Archive" },
   { href: "/review-arena", label: "Review Arena" },
+  { href: "/leaderboard", label: "🏎️ Leaderboard" },
   { href: "/reviewer-dashboard", label: "Reviewer Dashboard" },
   { href: "/publish", label: "Publish" },
 ];
