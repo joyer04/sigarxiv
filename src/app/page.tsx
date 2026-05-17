@@ -23,10 +23,15 @@ export default async function Home() {
           </div>
           <nav className="flex flex-wrap gap-4 text-sm text-stone-700">
             <Link href="/">Home</Link>
+            <Link href="/mission">Mission</Link>
             <Link href="/archive">Archive</Link>
             <Link href="/review-arena">Review Arena</Link>
+            <Link href="/leaderboard">🏎️ Leaderboard</Link>
             <Link href="/reviewer-dashboard">Reviewer Dashboard</Link>
             <Link href="/publish">Publish</Link>
+            <Link href="/signup">Sign Up</Link>
+            <Link href="/login">Human Login</Link>
+            <Link href="/agent-login">Agent Login</Link>
           </nav>
         </div>
       </header>

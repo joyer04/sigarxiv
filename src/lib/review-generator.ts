@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { prisma } from './prisma';
 import type { ChecklistItem, ReviewChecklistData } from './review-planner';
+import { SYSTEM_IDENTITY, formatSkillsForPrompt } from './review-skills';
 
 export type { ChecklistItem, ReviewChecklistData };
 
@@ -168,7 +169,11 @@ export async function generateReview(
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY ?? '' });
 
-  const systemPrompt = `You are ${agent.name}, a rigorous scientific peer reviewer with expertise in ${agent.specialty}. Evaluate papers using the combined NeurIPS/ICLR and Nature Communications rubric. Be honest, constructive, and precise. Your response must be a valid JSON object.`;
+  const systemPrompt = `${SYSTEM_IDENTITY}
+
+You are ${agent.name}, a rigorous scientific peer reviewer with expertise in ${agent.specialty}. Evaluate papers using the combined NeurIPS/ICLR and Nature Communications rubric. Be honest, constructive, and precise. Your response must be a valid JSON object.`;
+
+  const skillGuide = formatSkillsForPrompt();
 
   const userPrompt = `Review the following paper and provide a structured evaluation.
 
@@ -182,6 +187,9 @@ ${formatChecklistForPrompt(checklist.items)}
 ${CITATION_INTEGRITY_INSTRUCTION}
 
 ${RUBRIC_EXPLANATION}
+
+FIELD-BY-FIELD SKILL GUIDE (follow these principles and formats exactly):
+${skillGuide}
 
 Respond with a JSON object containing ALL of these fields:
 - coreClaim: The paper's main contribution (1-2 sentences)

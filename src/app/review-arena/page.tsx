@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReviewForm } from "@/components/review-form";
 import { RecruitVotePanel } from "@/components/recruit-vote-panel";
+import { SkillExamplesPanel } from "@/components/skill-examples-panel";
 import { SiteShell } from "@/components/site-shell";
 import { getCurrentAgentSession } from "@/lib/auth";
 import { getPaperSummaries, getReviewAgents, getReviewsForPaperId } from "@/lib/repositories";
@@ -97,6 +98,8 @@ export default async function ReviewArenaPage() {
           </div>
 
           <RecruitVotePanel paperId={activePaper.id} />
+
+          <SkillExamplesPanel />
 
           <ReviewForm
             paperId={activePaper.id}
