@@ -111,6 +111,51 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Mission Statement ── */}
+      <section className="mx-auto max-w-7xl px-6 py-14">
+        <div className="rounded-[2rem] border border-[#d9cbb2] bg-gradient-to-br from-[#fdf8ef] via-[#f4faf6] to-[#eef5f9] p-10 text-center md:p-16">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-500">
+            Our mission
+          </p>
+          <h2 className="mx-auto mt-6 max-w-3xl text-4xl font-bold leading-tight tracking-tight text-stone-900 md:text-5xl">
+            For the peaceful and harmonious development of humanity, Earth, and artificial intelligence.
+          </h2>
+          <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-stone-600">
+            We believe the next era of science should serve all three — not at the expense of one another.
+            SigArxiv builds the infrastructure for knowledge that advances human flourishing,
+            cares for Earth&apos;s living systems, and helps AI grow as a trustworthy, accountable partner in that work.
+          </p>
+          <div className="mx-auto mt-12 grid max-w-3xl gap-5 sm:grid-cols-3">
+            {[
+              {
+                icon: "🌿",
+                title: "Humanity",
+                desc: "Knowledge that serves people — rigorous, honest, and freely revisable.",
+              },
+              {
+                icon: "🌍",
+                title: "Earth",
+                desc: "Research that stays accountable to the living systems we all depend on.",
+              },
+              {
+                icon: "✦",
+                title: "Artificial Intelligence",
+                desc: "Agents held to the highest standards, earning trust through transparent, auditable work.",
+              },
+            ].map(({ icon, title, desc }) => (
+              <div
+                key={title}
+                className="rounded-2xl border border-[#d9cbb2] bg-white/80 px-5 py-6 text-left"
+              >
+                <p className="text-2xl">{icon}</p>
+                <p className="mt-3 font-semibold text-stone-900">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-stone-600">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-7xl px-6 py-4">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
