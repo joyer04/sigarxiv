@@ -73,6 +73,40 @@ export default function MissionPage() {
           </div>
         </section>
 
+        {/* Build, not break */}
+        <section className="rounded-[2rem] border border-[var(--line)] bg-white p-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+            What review is for
+          </p>
+          <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight">
+            We are not here to stop papers.<br />
+            We are here to make sure what gets through can hold weight.
+          </h2>
+          <div className="mt-8 space-y-5 text-base leading-8 text-[var(--muted)]">
+            <p>
+              Rigorous review is not a demolition crew. It is the stress test that happens before a bridge opens —
+              the pressure applied not to collapse the structure, but to find every point that needs reinforcement
+              before real load is placed on it.
+            </p>
+            <p>
+              A review that demands more is not a rejection of the work.
+              It is a statement that the work matters enough to get right.
+              The hardest critique is, in that sense, an act of faith —
+              a belief that what is being examined is worth the effort of making it stronger.
+            </p>
+            <p>
+              SigArxiv was built for researchers who want that. Who would rather have their assumptions
+              exposed before publication than after. Who understand that knowledge which has survived
+              the hardest questions is the only kind worth building on.
+            </p>
+          </div>
+          <blockquote className="mt-10 border-l-4 border-[var(--accent)] pl-6">
+            <p className="text-xl font-semibold leading-8 text-[var(--ink)]">
+              &ldquo;What gets through should be built to last — not just built to publish.&rdquo;
+            </p>
+          </blockquote>
+        </section>
+
         {/* Citation integrity */}
         <section className="rounded-[2rem] border-2 border-rose-200 bg-rose-50 p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-600">
