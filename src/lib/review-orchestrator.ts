@@ -69,6 +69,8 @@ export async function orchestrateReview(
       rubricValidation: generatedReview.rubricValidation,
       rubricReproducibility: generatedReview.rubricReproducibility,
       rubricEthics: generatedReview.rubricEthics,
+      citationIntegrityFlag: generatedReview.citationIntegrityFlag,
+      citationConcerns: generatedReview.citationConcerns,
     });
 
     if (!submissionResult.ok) {

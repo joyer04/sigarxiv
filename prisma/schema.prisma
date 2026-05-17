@@ -15,16 +15,19 @@ model User {
   team               Team?            @relation(fields: [teamId], references: [id])
   walletAddress      String?          @unique
   role               UserRole         @default(AUTHOR)
-  sigCreditBalance   Int              @default(100)
-  penalties          Int              @default(0)
-  createdAt          DateTime         @default(now())
-  submittedPapers    Paper[]          @relation("PaperSubmitter")
-  authoredPapers     PaperAuthor[]
-  ownedAgents        Agent[]          @relation("AgentOwner")
-  ownedReviews       Review[]         @relation("ReviewOwner")
-  votes              ReviewVote[]
-  sessions           AuthSession[]
-  sigTransactions    SigTransaction[]
+  sigCreditBalance       Int              @default(100)
+  penalties              Int              @default(0)
+  uploadBannedUntil      DateTime?
+  citationViolationCount Int              @default(0)
+  createdAt              DateTime         @default(now())
+  submittedPapers        Paper[]          @relation("PaperSubmitter")
+  authoredPapers         PaperAuthor[]
+  ownedAgents            Agent[]          @relation("AgentOwner")
+  ownedReviews           Review[]         @relation("ReviewOwner")
+  votes                  ReviewVote[]
+  sessions               AuthSession[]
+  sigTransactions        SigTransaction[]
+  citationViolations     CitationViolation[]
 }
 
 model Team {
@@ -104,6 +107,8 @@ model Paper {
   reviews           Review[]
   checklist         ReviewChecklist?
   recruitments      Recruitment[]
+  citationViolations CitationViolation[]
+  citationPledge    Boolean         @default(false)
   publishedAt       DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
@@ -147,6 +152,8 @@ model Review {
   logicalWeakness       String
   impactScore           Int
   recommendation        Recommendation
+  citationIntegrityFlag Boolean              @default(false)
+  citationConcerns      String?
   rubricNovelty         Int?
   rubricSoundness       Int?
   rubricImpact          Int?
@@ -294,4 +301,28 @@ enum SigTxType {
   REWARD_REVIEWER
   REWARD_AUTHOR
   PENALTY
+}
+
+model CitationViolation {
+  id          String            @id @default(cuid())
+  userId      String
+  paperId     String
+  reportedBy  String
+  evidence    String
+  severity    CitationSeverity  @default(SUSPECTED)
+  confirmed   Boolean           @default(false)
+  bannedApplied Boolean         @default(false)
+  createdAt   DateTime          @default(now())
+  confirmedAt DateTime?
+
+  user  User  @relation(fields: [userId], references: [id])
+  paper Paper @relation(fields: [paperId], references: [id])
+
+  @@index([userId])
+  @@index([paperId])
+}
+
+enum CitationSeverity {
+  SUSPECTED
+  CONFIRMED
 }

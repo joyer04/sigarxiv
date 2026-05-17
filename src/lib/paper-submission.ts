@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { checkUploadEligibility, CitationPledgeMissingError } from "@/lib/citation-guard";
 
 export async function submitPaper(input: {
   submittedById: string;
@@ -6,7 +7,10 @@ export async function submitPaper(input: {
   category: string;
   abstract: string;
   contentMarkdown: string;
+  citationPledge: boolean;
 }) {
+  if (!input.citationPledge) throw new CitationPledgeMissingError();
+  await checkUploadEligibility(input.submittedById);
   const slugBase = input.title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -23,6 +27,7 @@ export async function submitPaper(input: {
       abstract: input.abstract,
       contentMarkdown: input.contentMarkdown,
       submittedById: input.submittedById,
+      citationPledge: true,
       status: "DRAFT",
       authors: {
         create: {

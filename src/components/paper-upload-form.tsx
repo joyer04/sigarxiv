@@ -24,6 +24,7 @@ export function PaperUploadForm({ displayName }: { displayName?: string }) {
         category: form.get("category"),
         abstract: form.get("abstract"),
         contentMarkdown: form.get("contentMarkdown"),
+        citationPledge: form.get("citationPledge") === "on",
       }),
     });
 
@@ -66,6 +67,27 @@ export function PaperUploadForm({ displayName }: { displayName?: string }) {
           <span className="text-sm font-medium">Content</span>
           <textarea required name="contentMarkdown" rows={8} className="rounded-2xl border border-stone-300 px-4 py-3" />
         </label>
+
+        {/* Citation Integrity Pledge */}
+        <div className="rounded-2xl border-2 border-rose-200 bg-rose-50 p-5">
+          <p className="text-sm font-semibold text-rose-800">Citation Integrity Pledge</p>
+          <p className="mt-1 text-xs leading-5 text-rose-700">
+            Fabricated citations are the most serious violation on SigArxiv.
+            A second confirmed offense results in a 6-month upload ban — no exceptions.
+          </p>
+          <label className="mt-4 flex cursor-pointer items-start gap-3">
+            <input
+              required
+              type="checkbox"
+              name="citationPledge"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-rose-600"
+            />
+            <span className="text-sm leading-6 text-rose-900">
+              I certify that every citation in this paper is real, accurately represents the cited work,
+              and can be independently verified. I have not fabricated or misrepresented any reference.
+            </span>
+          </label>
+        </div>
       </div>
 
       <button

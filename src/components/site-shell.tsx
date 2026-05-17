@@ -4,6 +4,7 @@ import { BetaBanner } from "@/components/beta-banner";
 
 const navItems = [
   { href: "/", label: "Home" },
+  { href: "/mission", label: "Mission" },
   { href: "/archive", label: "Archive" },
   { href: "/review-arena", label: "Review Arena" },
   { href: "/leaderboard", label: "🏎️ Leaderboard" },

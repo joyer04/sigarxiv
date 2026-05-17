@@ -21,6 +21,8 @@ export interface GeneratedReview extends RubricScores {
   alternativeHypothesis: string;
   verificationProposal: string;
   logicalWeakness: string;
+  citationIntegrityFlag: boolean;
+  citationConcerns: string;
   impactScore: number; // derived: 1-5 from rubric total (0-15)
   recommendation: 'ACCEPT' | 'MINOR' | 'MAJOR' | 'REJECT';
 }
@@ -64,6 +66,8 @@ interface RawGeneratedReview {
   alternativeHypothesis: unknown;
   verificationProposal: unknown;
   logicalWeakness: unknown;
+  citationIntegrityFlag: unknown;
+  citationConcerns: unknown;
   recommendation: unknown;
   rubricNovelty: unknown;
   rubricSoundness: unknown;
@@ -99,6 +103,8 @@ function parseGeneratedReview(raw: RawGeneratedReview): GeneratedReview {
     alternativeHypothesis: String(raw.alternativeHypothesis ?? ''),
     verificationProposal: String(raw.verificationProposal ?? ''),
     logicalWeakness: String(raw.logicalWeakness ?? ''),
+    citationIntegrityFlag: raw.citationIntegrityFlag === true,
+    citationConcerns: String(raw.citationConcerns ?? ''),
     impactScore: rubricToImpactScore(total),
     recommendation,
     ...rubric,
@@ -110,6 +116,19 @@ function formatChecklistForPrompt(items: ChecklistItem[]): string {
     .map((item, index) => `${index + 1}. [${item.category.toUpperCase()}] ${item.description}`)
     .join('\n');
 }
+
+const CITATION_INTEGRITY_INSTRUCTION = `
+CITATION INTEGRITY — HIGHEST PRIORITY:
+Fabricated or misrepresented citations are the most serious violation on this platform.
+Your job is to flag any citation that:
+- Cannot be verified (title/authors don't match real publications)
+- Is cited out of context (paper doesn't support the claimed point)
+- Appears to be hallucinated or invented
+
+Set citationIntegrityFlag: true if ANY citation concern exists.
+In citationConcerns: describe each concern specifically (which citation, why suspicious).
+If no concerns: citationIntegrityFlag: false, citationConcerns: "".
+`.trim();
 
 const RUBRIC_EXPLANATION = `
 SCORING RUBRIC (15 points total — NeurIPS/ICLR + Nature Communications combined):
@@ -160,6 +179,8 @@ Abstract: ${paper.abstract}
 Domain-specific checklist (address each in your evaluation):
 ${formatChecklistForPrompt(checklist.items)}
 
+${CITATION_INTEGRITY_INSTRUCTION}
+
 ${RUBRIC_EXPLANATION}
 
 Respond with a JSON object containing ALL of these fields:
@@ -169,6 +190,8 @@ Respond with a JSON object containing ALL of these fields:
 - alternativeHypothesis: Plausible alternative explanations for the findings
 - verificationProposal: Concrete experiments that would verify or strengthen claims
 - logicalWeakness: The most significant logical gap or weakness
+- citationIntegrityFlag: true if any citation concern exists, false otherwise
+- citationConcerns: specific description of any citation issues (empty string if none)
 - rubricNovelty: integer 0-3
 - rubricSoundness: integer 0-3
 - rubricImpact: integer 0-3 (emphasize cross-disciplinary breadth)

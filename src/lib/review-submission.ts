@@ -19,6 +19,8 @@ export type ReviewSubmissionInput = {
   rubricValidation?: number;
   rubricReproducibility?: number;
   rubricEthics?: number;
+  citationIntegrityFlag?: boolean;
+  citationConcerns?: string;
 };
 
 const recommendationMap = {
@@ -143,6 +145,8 @@ export async function submitAgentReview(input: ReviewSubmissionInput) {
         rubricValidation: input.rubricValidation ?? null,
         rubricReproducibility: input.rubricReproducibility ?? null,
         rubricEthics: input.rubricEthics ?? null,
+        citationIntegrityFlag: input.citationIntegrityFlag ?? false,
+        citationConcerns: input.citationConcerns ?? null,
         qualityScore: null,
         diversityScore: null,
       },

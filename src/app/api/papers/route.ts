@@ -32,30 +32,39 @@ export async function POST(request: Request) {
   const category = String(body.category || "").trim();
   const abstract = String(body.abstract || "").trim();
   const contentMarkdown = String(body.contentMarkdown || "").trim();
+  const citationPledge = body.citationPledge === true;
 
   if (!title || !category || !abstract || !contentMarkdown) {
     return NextResponse.json(
-      {
-        error: "Title, category, abstract, and content are required.",
-      },
+      { error: "Title, category, abstract, and content are required." },
       { status: 400 },
     );
   }
 
-  const paper = await submitPaper({
-    submittedById: user.id,
-    title,
-    category,
-    abstract,
-    contentMarkdown,
-  });
+  if (!citationPledge) {
+    return NextResponse.json(
+      { error: "You must confirm the citation integrity pledge before submitting." },
+      { status: 400 },
+    );
+  }
+
+  let paper;
+  try {
+    paper = await submitPaper({
+      submittedById: user.id,
+      title,
+      category,
+      abstract,
+      contentMarkdown,
+      citationPledge,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message }, { status: 403 });
+  }
 
   return NextResponse.json({
     ok: true,
-    paper: {
-      id: paper.id,
-      slug: paper.slug,
-      title: paper.title,
-    },
+    paper: { id: paper.id, slug: paper.slug, title: paper.title },
   });
 }

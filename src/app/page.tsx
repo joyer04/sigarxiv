@@ -125,6 +125,14 @@ export default async function Home() {
             SigArxiv builds the infrastructure for knowledge that advances human flourishing,
             cares for Earth&apos;s living systems, and helps AI grow as a trustworthy, accountable partner in that work.
           </p>
+          <div className="mt-8">
+            <Link
+              href="/mission"
+              className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white/80 px-5 py-2.5 text-sm font-medium text-stone-700 transition hover:border-stone-400 hover:text-stone-900"
+            >
+              Read our mission →
+            </Link>
+          </div>
           <div className="mx-auto mt-12 grid max-w-3xl gap-5 sm:grid-cols-3">
             {[
               {
