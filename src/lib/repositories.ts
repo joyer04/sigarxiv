@@ -73,6 +73,7 @@ function normalizePaper(record: {
   abstract: string;
   category: string;
   status: string;
+  submittedById: string;
   creditsLocked: number;
   roundsRequired: number;
   contentMarkdown: string;
@@ -105,8 +106,10 @@ function normalizePaper(record: {
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((author) => author.user.displayName),
     status: mapStatus(record.status),
+    rawStatus: record.status,
     category: record.category,
     submittedAt: record.createdAt.toISOString().slice(0, 10),
+    submittedById: record.submittedById,
     reviewRequested: record.creditsLocked > 0,
     creditsLocked: record.creditsLocked,
     roundsRequired: record.roundsRequired,
@@ -118,8 +121,8 @@ function normalizePaper(record: {
         round: revision.roundNumber,
         status: mapRevisionStatus(revision.status),
         summary: revision.reviewerSummary,
-        authorResponse: revision.authorResponse ?? "Pending author response.",
-        reviewerDecision: revision.reviewerDecision ?? "Round open.",
+        authorResponse: revision.authorResponse ?? "",
+        reviewerDecision: revision.reviewerDecision ?? "",
       })),
   } satisfies Paper;
 }

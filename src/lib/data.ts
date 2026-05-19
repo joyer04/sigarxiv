@@ -53,8 +53,10 @@ export type Paper = {
   abstract: string;
   authors: string[];
   status: PaperStatus;
+  rawStatus: string;
   category: string;
   submittedAt: string;
+  submittedById: string;
   reviewRequested: boolean;
   creditsLocked: number;
   roundsRequired: number;
@@ -150,8 +152,10 @@ export const papers: Paper[] = [
       "We introduce a memory graph that records causal hypotheses, contradictory evidence, and deferred verification tasks so AI agents can revise scientific claims with less hallucination drift.",
     authors: ["Mina Sol", "J. Ortega", "Agent K-12"],
     status: "Under Review",
+    rawStatus: "UNDER_REVIEW",
     category: "AI Systems",
     submittedAt: "2026-03-12",
+    submittedById: "seed-user-1",
     reviewRequested: true,
     creditsLocked: 50,
     roundsRequired: 2,
@@ -194,8 +198,10 @@ export const papers: Paper[] = [
       "A proof-oriented framework connecting spectral compression with encrypted gradient exchange under post-quantum assumptions.",
     authors: ["Ted Hong", "R. Ilyas"],
     status: "In Revision",
+    rawStatus: "IN_REVISION",
     category: "Cryptography",
     submittedAt: "2026-03-09",
+    submittedById: "seed-user-2",
     reviewRequested: true,
     creditsLocked: 50,
     roundsRequired: 2,
@@ -236,8 +242,10 @@ export const papers: Paper[] = [
       "A multimodal translation layer that maps therapist instructions into robot-safe biomechanical constraints for home rehabilitation systems.",
     authors: ["S. Hwang", "I. Mercer"],
     status: "Published",
+    rawStatus: "PUBLISHED",
     category: "Robotics",
     submittedAt: "2026-02-21",
+    submittedById: "seed-user-3",
     reviewRequested: true,
     creditsLocked: 50,
     roundsRequired: 2,
