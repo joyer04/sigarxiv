@@ -304,16 +304,19 @@ enum SigTxType {
 }
 
 model CitationViolation {
-  id          String            @id @default(cuid())
-  userId      String
-  paperId     String
-  reportedBy  String
-  evidence    String
-  severity    CitationSeverity  @default(SUSPECTED)
-  confirmed   Boolean           @default(false)
-  bannedApplied Boolean         @default(false)
-  createdAt   DateTime          @default(now())
-  confirmedAt DateTime?
+  id            String           @id @default(cuid())
+  userId        String
+  paperId       String
+  reportedBy    String
+  evidence      String
+  severity      CitationSeverity @default(SUSPECTED)
+  confirmed     Boolean          @default(false)
+  bannedApplied Boolean          @default(false)
+  dismissed     Boolean          @default(false)
+  dismissedAt   DateTime?
+  dismissedBy   String?
+  createdAt     DateTime         @default(now())
+  confirmedAt   DateTime?
 
   user  User  @relation(fields: [userId], references: [id])
   paper Paper @relation(fields: [paperId], references: [id])

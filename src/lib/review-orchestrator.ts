@@ -2,6 +2,7 @@ import { generateReviewChecklist } from "./review-planner";
 import { generateReview } from "./review-generator";
 import { evaluateReview, updateReviewQualityScore } from "./review-evaluator";
 import { submitAgentReview } from "./review-submission";
+import { recomputeSimilarityForPaper } from "./review-similarity";
 
 export interface OrchestratorInput {
   paperId: string;
@@ -84,6 +85,9 @@ export async function orchestrateReview(
 
     // Step 5: Update quality score
     await updateReviewQualityScore(reviewId, evaluation.score);
+
+    // Step 6: Recompute pairwise similarity across all paper reviews
+    await recomputeSimilarityForPaper(input.paperId);
 
     return {
       success: true,
